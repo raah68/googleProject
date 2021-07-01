@@ -1,15 +1,17 @@
 package com.google;
 
 import javax.xml.transform.stream.StreamSource;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class VideoPlayer {
-  private List<Video> vidList;
+  private ArrayList<Video> randomVideoList;
   private final VideoLibrary videoLibrary;
+
 
   public VideoPlayer() {
     this.videoLibrary = new VideoLibrary();
-    this.vidList = this.videoLibrary.getVideos();
+    //this.vidList = this.videoLibrary.getVideos();
   }
 
   public void numberOfVideos() {
@@ -41,33 +43,71 @@ public class VideoPlayer {
 
   public void playVideo(String videoId) {
     String test = "hello";
-    //find the current video playing
-    
-
-
-    for(int i = 0; i < vidList.size(); i++){
-
-
-      if(vidList.get(i).getVideoId().equals(videoId)){
-        if(vidList.get(i).getState()){
-          System.out.println("Stopping Video: "+ vidList.get(i).getTitle());
-          System.out.println("Playing Video: "+ vidList.get(i).getTitle());
-          break;
-        } else {
-          vidList.get(i).setState(true);
-          System.out.println("Playing Video: "+ vidList.get(i).getTitle());
-          break;
-        }//end of inner if
-      }//end of first if
-    }//end of iteration
+    //find the video
+    Video selectedVideo = videoLibrary.getVideo(videoId);
+    //find the current playing video
+    Video currentPlayingVideo = null;
+    //Iterate through the videoLibrary to check if a video is already playing
+    for(Video vid : videoLibrary.getVideos()){
+      if(vid.getState()){
+        currentPlayingVideo = vid;
+      }
+    }
+    //Display text if conditions are a match
+    if(selectedVideo == null){
+      System.out.println("Cannot play video: Video does not exist");
+    } else if(currentPlayingVideo != null && (currentPlayingVideo != selectedVideo)){
+      videoLibrary.getVideo(selectedVideo.getVideoId()).setState(true);
+      videoLibrary.getVideo(currentPlayingVideo.getVideoId()).setState(false);
+      System.out.println("Stopping video: "+currentPlayingVideo.getTitle());
+      System.out.println("Playing video: "+selectedVideo.getTitle());
+    } else if(selectedVideo.getState()) {
+      System.out.println("Stopping video: "+selectedVideo.getTitle());
+      System.out.println("Playing video: "+selectedVideo.getTitle());
+    } else {
+      selectedVideo.setState(true);
+      System.out.println("Playing video: "+selectedVideo.getTitle());
+    }
   }//end of method
 
   public void stopVideo() {
-    System.out.println("stopVideo needs implementation");
+    Video currentPlayingVideo = null;
+    //Iterate through the videoLibrary to check if a video is already playing
+    for(Video vid : videoLibrary.getVideos()){
+      if(vid.getState()){
+        currentPlayingVideo = vid;
+      }
+    }
+    if(currentPlayingVideo != null){
+      videoLibrary.getVideo(currentPlayingVideo.getVideoId()).setState(false);
+      System.out.println("Stopping video: "+currentPlayingVideo.getTitle());
+    } else {
+      System.out.println("Cannot stop video: No video is currently playing");
+    }
+
   }
 
   public void playRandomVideo() {
-    System.out.println("playRandomVideo needs implementation");
+    addNewVideos();
+    Video currentPlayingVideo = null;
+    //Iterate through the videoLibrary to check if a video is already playing
+    for(Video vid : videoLibrary.getVideos()){
+      if(vid.getState()){
+        currentPlayingVideo = vid;
+      }
+    }
+    Random rand = new Random();
+    Video randomVid = videoLibrary.getVideos().get(rand.nextInt(videoLibrary.getVideos().size()));
+
+    if(currentPlayingVideo != null && currentPlayingVideo == randomVid){
+      videoLibrary.getVideo(currentPlayingVideo.getVideoId()).setState(false);
+      System.out.println("Stopping video: "+currentPlayingVideo.getTitle());
+      videoLibrary.getVideo(randomVid.getVideoId()).setState(true);
+      System.out.println("Playing video: "+randomVid.getTitle());
+    } else {
+      videoLibrary.getVideo(randomVid.getVideoId()).setState(true);
+      System.out.println("Playing video: "+randomVid.getTitle());
+    }
   }
 
   public void pauseVideo() {
@@ -128,5 +168,14 @@ public class VideoPlayer {
 
   public void allowVideo(String videoId) {
     System.out.println("allowVideo needs implementation");
+  }
+
+  void addNewVideos(){
+    ArrayList<String> tagList = new ArrayList<>();
+    tagList.add("#google");
+    tagList.add("#life");
+    tagList.add("#career");
+    videoLibrary.getVideos().add(new Video("Life at Google", "random_video_One", tagList));
+    videoLibrary.getVideos().add(new Video("Living the Unit life", "random_video_two", tagList));
   }
 }

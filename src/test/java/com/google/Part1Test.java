@@ -94,16 +94,14 @@ public class Part1Test extends TestBase {
     assertEquals(3, lines.length, outputStream.toString());
     assertThat(lines[0], containsString("Playing video: Amazing Cats"));
     assertThat(lines[1], containsString("Stopping video: Amazing Cats"));
-    assertThat(lines[2],
-        containsString("Cannot stop video: No video is currently playing"));
+    assertThat(lines[2], containsString("Cannot stop video: No video is currently playing"));
   }
 
   @Test
   public void testStopVideoNothingPlaying() {
     videoPlayer.stopVideo();
     assertEquals(1, getOutputLines().length);
-    assertThat(outputStream.toString(),
-        containsString("Cannot stop video: No video is currently playing"));
+    assertThat(outputStream.toString(), containsString("Cannot stop video: No video is currently playing"));
   }
 
   @Test
